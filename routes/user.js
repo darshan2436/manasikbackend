@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authenticateToken = require('../middleware/authMiddleware');
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Input validation middleware
 const validateUserInput = (req, res, next) => {
@@ -56,7 +57,7 @@ router.post('/register', validateUserInput, async (req, res) => {
     // Create token for automatic login after registration
     const token = jwt.sign(
       { userId: savedUser._id },
-      process.env.JWT_SECRET,
+      JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -89,7 +90,7 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET,
+      JWT_SECRET,
       { expiresIn: '24h' }
     );
 
