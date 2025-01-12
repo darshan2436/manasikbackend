@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const authenticateToken = require('../middleware/authMiddleware');
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -109,57 +109,57 @@ router.post('/login', async (req, res) => {
 });
 
 // Get user profile
-// router.get('/profile', authenticateToken, async (req, res) => {
-//   try {
-//     const user = await User.findById(req.user.userId).select('-password');
-//     if (!user) {
-//       return res.status(404).json({ error: 'User not found' });
-//     }
-//     res.json(user);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Error fetching profile: ' + error.message });
-//   }
-// });
+router.get('/profile', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select('-password');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching profile: ' + error.message });
+  }
+});
 
-// // Update user profile
-// router.put('/profile', authenticateToken, async (req, res) => {
-//   try {
-//     const updates = {};
-//     const allowedUpdates = ['username', 'email'];
+// Update user profile
+router.put('/profile', authenticateToken, async (req, res) => {
+  try {
+    const updates = {};
+    const allowedUpdates = ['username', 'email'];
     
-//     // Only allow updating specific fields
-//     for (let field of allowedUpdates) {
-//       if (req.body[field]) {
-//         updates[field] = req.body[field];
-//       }
-//     }
+    // Only allow updating specific fields
+    for (let field of allowedUpdates) {
+      if (req.body[field]) {
+        updates[field] = req.body[field];
+      }
+    }
 
-//     // If updating email, validate format
-//     if (updates.email) {
-//       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//       if (!emailRegex.test(updates.email)) {
-//         return res.status(400).json({ error: 'Invalid email format' });
-//       }
-//     }
+    // If updating email, validate format
+    if (updates.email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(updates.email)) {
+        return res.status(400).json({ error: 'Invalid email format' });
+      }
+    }
 
-//     const user = await User.findByIdAndUpdate(
-//       req.user.userId,
-//       { $set: updates },
-//       { new: true, runValidators: true }
-//     ).select('-password');
+    const user = await User.findByIdAndUpdate(
+      req.user.userId,
+      { $set: updates },
+      { new: true, runValidators: true }
+    ).select('-password');
 
-//     if (!user) {
-//       return res.status(404).json({ error: 'User not found' });
-//     }
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
-//     res.json({
-//       message: 'Profile updated successfully',
-//       user
-//     });
-//   } catch (error) {
-//     res.status(500).json({ error: 'Error updating profile: ' + error.message });
-//   }
-// });
+    res.json({
+      message: 'Profile updated successfully',
+      user
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating profile: ' + error.message });
+  }
+});
 
 // Delete account
 router.delete('/account', authenticateToken, async (req, res) => {
