@@ -41,7 +41,7 @@ router.post('/register', validateUserInput, async (req, res) => {
 
     if (existingUser) {
       return res.status(400).json({ 
-        error: 'User with this email or username already exists' 
+        message: 'User with this email or username already exists' 
       });
     }
 
@@ -77,12 +77,12 @@ router.post('/login', async (req, res) => {
     console.log(req.body);
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(400).json({ error: 'User not found' });
+      return res.status(400).json({ message: 'User not found' });
     }
 
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) {
-      return res.status(400).json({ error: 'Invalid password' });
+      return res.status(400).json({ message: 'Invalid password' });
     }
 
     // Update last login timestamp
@@ -114,11 +114,11 @@ router.get('/profile', authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).select('-password');
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ message: 'User not found' });
     }
     res.json(user);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching profile: ' + error.message });
+    res.status(500).json({ message: 'Error fetching profile: ' + error.message });
   }
 });
 
@@ -139,7 +139,7 @@ router.put('/profile', authenticateToken, async (req, res) => {
     if (updates.email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(updates.email)) {
-        return res.status(400).json({ error: 'Invalid email format' });
+        return res.status(400).json({ message: 'Invalid email format' });
       }
     }
 
@@ -150,7 +150,7 @@ router.put('/profile', authenticateToken, async (req, res) => {
     ).select('-password');
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     res.json({
@@ -167,11 +167,11 @@ router.delete('/account', authenticateToken, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.user.userId);
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ message: 'User not found' });
     }
     res.json({ message: 'Account deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Error deleting account: ' + error.message });
+    res.status(500).json({ message: 'Error deleting account: ' + error.message });
   }
 });
 
