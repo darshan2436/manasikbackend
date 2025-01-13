@@ -11,8 +11,6 @@ router.post('/', authenticateToken, async (req, res) => {
         description: req.body.description,
         type: req.body.type,
         basedContent: req.body.basedContent,
-        mediaUrl: req.body.mediaUrl,
-        tags: req.body.tags
       });
       const savedResource = await resource.save();
       res.status(201).json(savedResource);

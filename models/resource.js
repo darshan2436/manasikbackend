@@ -15,8 +15,6 @@ const resourceSchema = new mongoose.Schema({
       required: true,
       enum: ['research', 'user']
     },
-    mediaUrl: { type: String, required: true },
-    tags: [String],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });
