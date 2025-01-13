@@ -74,6 +74,7 @@ router.post('/register', validateUserInput, async (req, res) => {
 // Login user
 router.post('/login', async (req, res) => {
   try {
+    console.log(req.body);
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
       return res.status(400).json({ error: 'User not found' });
