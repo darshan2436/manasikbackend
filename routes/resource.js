@@ -9,7 +9,7 @@ router.post('/', authenticateToken, async (req, res) => {
       const resource = new Resource({
         title: req.body.title,
         description: req.body.description,
-        type: req.body.type,
+        mediaURL: req.body.mediaURL,
         basedContent: req.body.basedContent,
       });
       const savedResource = await resource.save();
